@@ -1,78 +1,57 @@
 # Load necessary libraries
 library(ggplot2)
-library(caret)
+data("iris")
 
-# Read the data from the CSV file
-aqi_data <- read.csv("aqi_data.csv")
+# Fit the linear regression model
+linear_model <- lm(Petal.Length ~ Sepal.Length, data = iris)
 
-# View the data
-head(aqi_data)
-import pandas as pd
-import numpy as np
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
+# Summary of the model
+summary(linear_model)
 
-# Load the dataset
-data = pd.read_csv('winequality-red.csv')
+# Plot the data and the regression line
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "blue") +
+  labs(title = "Linear Regression: Petal Length vs. Sepal Length", x = "Sepal Length (cm)", y = "Petal Length (cm)")
+# Scatter plot with linear regression line
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "blue") +
+  labs(title = "Linear Regression: Petal Length vs. Sepal Length", x = "Sepal Length (cm)", y = "Petal Length (cm)")
 
-# Select the independent variable and dependent variable
-X = data[['alcohol']]
-y = data['quality']
+# Fit the polynomial regression model
+poly_model <- lm(Petal.Length ~ poly(Sepal.Length, 2), data = iris)
 
-# Split the dataset into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+# Summary of the model
+summary(poly_model)
 
-# Create the linear regression model
-model = LinearRegression()
+# Plot the data and the polynomial regression line
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), col = "red") +
+  labs(title = "Polynomial Regression: Petal Length vs. Sepal Length", x = "Sepal Length (cm)", y = "Petal Length (cm)")
+# Scatter plot with polynomial regression line
+ggplot(iris, aes(x = Sepal.Length, y = Petal.Length)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ poly(x, 2), col = "red") +
+  labs(title = "Polynomial Regression: Petal Length vs. Sepal Length", x = "Sepal Length (cm)", y = "Petal Length (cm)")
 
-# Train the model
-model.fit(X_train, y_train)
+# Create a binary outcome variable
+iris$Is_Setosa <- ifelse(iris$Species == "setosa", 1, 0)
 
-# Predict using the model
-y_pred = model.predict(X_test)
+# Fit the logistic regression model
+logistic_model <- glm(Is_Setosa ~ Sepal.Length, data = iris, family = binomial)
 
-# Plotting
-plt.scatter(X_test, y_test, color='blue', label='Actual')
-plt.plot(X_test, y_pred, color='red', linewidth=2, label='Predicted')
-plt.title('Linear Regression: Alcohol vs Quality')
-plt.xlabel('Alcohol')
-plt.ylabel('Quality')
-plt.legend()
-plt.show()
+# Summary of the model
+summary(logistic_model)
 
-# Evaluation
-print(f'Mean Squared Error: {mean_squared_error(y_test, y_pred)}')
-print(f'R-squared: {r2_score(y_test, y_pred)}')
-from sklearn.preprocessing import PolynomialFeatures
-
-# Transform the data to include polynomial features
-poly = PolynomialFeatures(degree=3)
-X_poly = poly.fit_transform(X)
-
-# Split the transformed data into training and testing sets
-X_train, X_test, y_train, y_test = train_test_split(X_poly, y, test_size=0.2, random_state=42)
-
-# Create the linear regression model for polynomial regression
-model = LinearRegression()
-
-# Train the model
-model.fit(X_train, y_train)
-
-# Predict using the model
-y_pred = model.predict(X_test)
-
-# Plotting
-plt.scatter(X['alcohol'], y, color='blue', label='Actual')
-plt.scatter(X_test[:, 1], y_pred, color='red', label='Predicted')
-plt.title('Polynomial Regression: Alcohol vs Quality')
-plt.xlabel('Alcohol')
-plt.ylabel('Quality')
-plt.legend()
-plt.show()
-
-# Evaluation
-print(f'Mean Squared Error: {mean_squared_error(y_test, y_pred)}')
-print(f'R-squared: {r2_score(y_test, y_pred)}')
-
+# Plot the data and the logistic regression curve
+ggplot(iris, aes(x = Sepal.Length, y = Is_Setosa)) +
+  geom_point(alpha = 0.5) +
+  stat_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE, col = "green") +
+  labs(title = "Logistic Regression: Setosa vs. Sepal Length", x = "Sepal Length (cm)", y = "Is Setosa (binary)")
+# Scatter plot with logistic regression curve
+ggplot(iris, aes(x = Sepal.Length, y = Is_Setosa)) +
+  geom_point(alpha = 0.5) +
+  stat_smooth(method = "glm", method.args = list(family = "binomial"), se = FALSE, col = "green") +
+  labs(title = "Logistic Regression: Setosa vs. Sepal Length", x = "Sepal Length (cm)", y = "Is Setosa (binary)")
